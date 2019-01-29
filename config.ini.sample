@@ -1,0 +1,4 @@
+; will be removed from reported file paths
+base_url=app/code
+input_filename=report.json
+output_filename=report.html

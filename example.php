@@ -1,9 +1,24 @@
 <?php 
-$json = file_get_contents('report1.json');
+$config = parse_ini_file('config.ini');
+$inputFilename = $config['input_filename'];
+$outputFilename = $config['output_filename'];
+
+// Retrieve PHPCS JSON report
+$json = file_get_contents($inputFilename);
 $jsonData = json_decode($json);
 
 $revisedData = array();
+// data to be written to file
+$output = '';
 $defaultKey = 'unknown';
+
+function writeOut($content, $file)
+{
+	$outputFile = fopen($file, 'w');
+	fwrite($outputFile, $content);
+	fclose($outputFile);
+
+}
 
 // Get summary for all Code Sniff
 // print_r($jsonData->totals);
@@ -40,10 +55,14 @@ foreach($jsonData->files as $file => $data) {
 // Test revised data
 foreach($revisedData as $sniff => $data) {
 	echo $sniff . PHP_EOL;
+	$output .= $sniff . PHP_EOL;
 	foreach($data as $file) {
 		echo "\t" . $file['ref_path'] . PHP_EOL;
+		$output .= $file['ref_path'] . PHP_EOL;
 		//echo "\t\t" . $file['ref_filename'] . PHP_EOL;
 		//echo "\t\t" . $file['message'] . PHP_EOL;
 	}
 	echo PHP_EOL;
 }
+// Write results to file
+writeOut($output, $outputFilename);
