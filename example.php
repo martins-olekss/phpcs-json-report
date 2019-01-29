@@ -1,8 +1,4 @@
 <?php 
-
-// Example of command
-// php phpcs.phar --standard=Zend -s --report=json --report-file=report.json path/to/code
-// pass parameter -s to include source field in report ( sniff ID )
 $json = file_get_contents('report1.json');
 $jsonData = json_decode($json);
 
