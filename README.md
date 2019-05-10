@@ -2,5 +2,8 @@
 2. Configure BASE path and execute PHP script, pipe to output HTML file
 
 # Example of command
-`php phpcs.phar --standard=Zend -s --report=json --report-file=report.json path/to/code`
+`phpcs --standard=Zend -s --extensions=php,phtml --report=json --report-file=report.json path/to/code`
 - pass parameter `-s` to include source field in report ( sniff ID )
+- Zend standard used as example
+
+Depending on method of Code Sniffer installation, you might need to replace `php phpcs.phar` with `phpcs`
