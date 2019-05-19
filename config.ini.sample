@@ -1,4 +1,3 @@
-; will be removed from reported file paths
-base_url=app/code
+base_url=app/code ; will be removed from reported file paths
 input_filename=report.json
 output_filename=report.html

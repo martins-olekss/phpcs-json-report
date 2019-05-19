@@ -14,13 +14,13 @@ $defaultKey = 'unknown';
 
 // URL that will be replaced befor HTML output
 // TODO: Replace with config from INI
-define('BASE_URL','/var/www/project/');
+define('BASE_URL', '/var/www/project/');
 
 function writeOut($content, $file)
 {
-	$outputFile = fopen($file, 'w');
-	fwrite($outputFile, $content);
-	fclose($outputFile);
+    $outputFile = fopen($file, 'w');
+    fwrite($outputFile, $content);
+    fclose($outputFile);
 
 }
 
@@ -36,52 +36,56 @@ foreach ($jsonData->files as $file => $data) {
             $key = $item->source;
         } else {
             $key = $defaultKey;
-		}
-		//TODO: Add more fields from sniffs
+        }
+        //TODO: Add more fields from sniffs
         $revisedData[$key][] = array(
             'ref_path' => $file . ':' . $item->line, // full_path:line
             'ref_filename' => basename($file), // only filename
             'line' => $item->line, // only code line
             'message' => $item->message
         );
-
-        // Just outputting info
-        //echo '-- MESSAGE:' . $item->message . PHP_EOL;
-        //echo '-- TYPE:' . $item->type . PHP_EOL;
-        //echo '-- LINE:' . $item->line . PHP_EOL;
-        //echo PHP_EOL;
-        // format file:line
-        //echo $file . ':' . $item->line . PHP_EOL;
-        //echo "\t" . $item->message . PHP_EOL;
     }
 }
 ?>
 
 <!-- OUTPUT -->
 <html>
-	<head>
-		<meta charset="UTF-8">
-	</head> 
-	<body>
-	<style>
-	* { font-size: 12px; } 
-	table { border-collapse: collapse; } 
-	table td { border: 1px solid #f3f3f3; } 
-	.sniff-name, .sniff-count { padding-top: 10px; background-color: #f0f0f0; font-weight: bold; }
-	</style>
-	<table>
-	<?php foreach ($revisedData as $sniff => $data): ?>    
-		<tr>
-			<td class="sniff-name"><?= $sniff ?></td>
-			<td class="sniff-count">Count:<?= count($revisedData[$sniff]) ?></td>
-		</tr>    
-		<?php foreach ($data as $file): ?>
-		<tr>
-			<td class="path"><?= str_replace(BASE_URL, '', $file['ref_path']) ?></td>
-			<td class="message"><?= $file['message'] ?></td>
-		</tr>    
-		<?php endforeach; ?>    
-	<?php endforeach; ?>
-	</table>
-	</body>
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<style>
+    * {
+        font-size: 12px;
+    }
+
+    table {
+        border-collapse: collapse;
+    }
+
+    table td {
+        border: 1px solid #f3f3f3;
+    }
+
+    .sniff-name, .sniff-count {
+        padding-top: 10px;
+        background-color: #f0f0f0;
+        font-weight: bold;
+    }
+</style>
+<table>
+    <?php foreach ($revisedData as $sniff => $data): ?>
+        <tr>
+            <td class="sniff-name"><?= $sniff ?></td>
+            <td class="sniff-count">Count:<?= count($revisedData[$sniff]) ?></td>
+        </tr>
+        <?php foreach ($data as $file): ?>
+            <tr>
+                <td class="path"><?= str_replace(BASE_URL, '', $file['ref_path']) ?></td>
+                <td class="message"><?= $file['message'] ?></td>
+            </tr>
+        <?php endforeach; ?>
+    <?php endforeach; ?>
+</table>
+</body>
 </html>
