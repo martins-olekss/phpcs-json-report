@@ -14,7 +14,7 @@ $defaultKey = 'unknown';
 
 // URL that will be replaced befor HTML output
 // TODO: Replace with config from INI
-define('BASE_URL', '/var/www/project/');
+define('BASE_URL', '\var\www\project');
 
 function writeOut($content, $file)
 {
