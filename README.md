@@ -1,5 +1,5 @@
 # PHP Code Sniffer Report Creator
-Combines PHPCS, Symfony Process, Symfony Command to retrieve results from PHP Code Sniffer, group by issues and present in readable HTML format
+Combines PHPCS, Symfony Process to retrieve results from PHP Code Sniffer, group by issues and present in readable HTML format
 
 # Usage ( planned )
 1. Generate JSON report with PHP Code Sniffer ( enable '-s' parameter )
@@ -13,7 +13,5 @@ Combines PHPCS, Symfony Process, Symfony Command to retrieve results from PHP Co
 Depending on method of Code Sniffer installation, you might need to replace `php phpcs.phar` with `phpcs`
 
 ## Future plans
-- Develop better behaviour using Symfony Process, Symfony Command package
 - Improve final output
-- Ability to ignore certain directories ( like vendor)
 - Probably add templating engine ( like Twig ) for better experience of creating new output designs
