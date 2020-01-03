@@ -1,4 +1,7 @@
 <?php
+const __ROOT__ = __DIR__ . '/..';
+require __ROOT__.'/vendor/autoload.php';
+$con = new Connection();
 $path = 'report/';
 $files = array_diff(scandir($path), array('.', '..'));
 ?>
