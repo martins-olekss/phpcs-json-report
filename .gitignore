@@ -1,3 +1,6 @@
 .idea
 config.ini
 vendor
+tmp/*.json
+pub/report/*.html
+database/*.sqlite3

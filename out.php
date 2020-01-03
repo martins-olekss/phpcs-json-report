@@ -3,13 +3,12 @@
  * Processes json file
  * Produces HTML output
  */
-
-$config = parse_ini_file('config.ini');
-$inputFilename = $config['input_filename'];
-$outputFilename = $config['output_filename'];
+$inputFile = $argv[1];
+$projectBasePath = $argv[2];
+$scanInfo = json_decode($argv[3]);
 
 // Retrieve PHPCS JSON report
-$json = file_get_contents($inputFilename);
+$json = file_get_contents($inputFile);
 $jsonData = json_decode($json);
 
 $revisedData = array();
@@ -17,9 +16,8 @@ $revisedData = array();
 $output = '';
 $defaultKey = 'unknown';
 
-// URL that will be replaced befor HTML output
-// TODO: Replace with config from INI
-define('BASE_URL', '\var\www\project');
+// URL that will be replaced before HTML output
+define('BASE_URL', $projectBasePath);
 
 function writeOut($content, $file)
 {
@@ -78,6 +76,22 @@ foreach ($jsonData->files as $file => $data) {
     }
 </style>
 <table>
+    <tr>
+        <th>Examined directory</th>
+        <td><?= $scanInfo->examineDirectory ?></td>
+    </tr>
+    <tr>
+        <th>Standards</th>
+        <td><?= implode(', ', $scanInfo->standards) ?></td>
+    </tr>
+    <tr>
+        <th>Report file</th>
+        <td><?= $scanInfo->jsonReportFile ?></td>
+    </tr>
+    <tr>
+        <th>Date</th>
+        <td><?= date('Y-d-m H:i:s', time()); ?></td>
+    </tr>
     <?php foreach ($revisedData as $sniff => $data): ?>
         <tr>
             <td class="sniff-name"><?= $sniff ?></td>

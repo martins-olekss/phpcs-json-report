@@ -6,25 +6,29 @@ require __DIR__.'/vendor/autoload.php';
 
 use Symfony\Component\Process\Process;
 
-$phpcs = 'C:\utilities\phpcs.phar'; // Location of the phpcs
-$jsonFileName = 'report.json'; // Name of the report file
-$outputFileName = 'test.html'; // File for final output
-$dir = 'C:\www\project'; // Target for Code Sniffer
+// TODO: Confirm required files / directories exists
+$settings = [
+    'phpcs' => 'D:\utilities\phpcs.phar',
+    'examineDirectory' => 'C:\WinNMP\WWW\discovery-heap',
+    'standards' => ['PSR1', 'Zend'],
+    'ignore' => ['vendor/*', 'template/cache/*']
+];
 
-// Standards to use
-$standards = implode(',', [
-    'PSR1',
-    'Zend'
-]);
+$standards = implode(',', $settings['standards']);
+$ignore = implode(',', $settings['ignore']);
+$hash = md5($standards.$ignore.$settings['examineDirectory'].date_timestamp_get(date_create()));
+$settings['jsonReportFile'] = 'tmp/' . $hash . '.json';
+$settings['outputFile'] = 'pub/report/' . $hash . '.html';
+
 $command = [
     'php',
-    $phpcs,
+    $settings['phpcs'],
     "--standard={$standards}",
     '-s',
-    '--ignore=vendor/*',
+    "--ignore={$ignore}",
     '--report=json',
-    "--report-file={$jsonFileName}",
-    $dir
+    "--report-file={$settings['jsonReportFile']}",
+    $settings['examineDirectory']
 ];
 
 /*
@@ -33,14 +37,18 @@ $command = [
  */
 $process = new Process($command);
 $process->run();
+// TODO: Confirm json file exists
 if ($process->isTerminated()) {
     $subCommand = [
         'php',
-        'out.php'
+        'out.php',
+        $settings['jsonReportFile'],
+        $settings['examineDirectory'],
+        json_encode($settings)
     ];
     $subProcess = new Process($subCommand);
     $subProcess->run();
-    $output = fopen($outputFileName, 'w');
+    $output = fopen($settings['outputFile'], 'w');
     fwrite($output, $subProcess->getOutput());
     fclose($output);
 }

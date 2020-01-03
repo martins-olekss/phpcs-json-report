@@ -1,6 +1,9 @@
 # PHP Code Sniffer Report Creator
 Combines PHPCS, Symfony Process to retrieve results from PHP Code Sniffer, group by issues and present in readable HTML format
 
+##
+```tmp``` directory holds temporary json file before processing and storing in database
+
 # Usage ( planned )
 1. Generate JSON report with PHP Code Sniffer ( enable '-s' parameter )
 2. Configure BASE path and execute PHP script, pipe to output HTML file
