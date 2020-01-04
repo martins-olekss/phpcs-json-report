@@ -3,7 +3,6 @@
  *  sub-process that parses json results and creates HTML report
  */
 require __DIR__ . '/vendor/autoload.php';
-
 // Incoming command parameters
 // TODO: Validate incoming params
 $config['inputFile'] = $argv[1];
@@ -19,25 +18,7 @@ $result = ResultProcessor::processResults($jsonData, $config);
 <html>
 <head>
     <meta charset="UTF-8">
-    <style>
-        * {
-            font-size: 12px;
-        }
-
-        table {
-            border-collapse: collapse;
-        }
-
-        table td {
-            border: 1px solid #f3f3f3;
-        }
-
-        .sniff-name, .sniff-count {
-            padding-top: 10px;
-            background-color: #f0f0f0;
-            font-weight: bold;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
 </head>
 <body>
 <table>
