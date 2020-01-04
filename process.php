@@ -1,54 +1,74 @@
 <?php
 /*
- * Executes all necessary commands
+ *  sub-process that parses json results and creates HTML report
  */
-require __DIR__.'/vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 
-use Symfony\Component\Process\Process;
+// Incoming command parameters
+// TODO: Validate incoming params
+$config['inputFile'] = $argv[1];
+$config['projectBasePath'] = $argv[2];
+$config['scanInfo'] = json_decode($argv[3], true);
 
-// TODO: Confirm required files / directories exists
-$settings = [
-    'phpcs' => 'D:\utilities\phpcs.phar',
-    'examineDirectory' => 'C:\WinNMP\WWW\discovery-heap',
-    'standards' => ['PSR1', 'Zend'],
-    'ignore' => ['vendor/*', 'template/cache/*']
-];
+$config['defaultKey'] = 'unknown';
+$json = file_get_contents($config['inputFile']);
+$jsonData = json_decode($json, true);
+$result = ResultProcessor::processResults($jsonData, $config);
+?>
 
-$standards = implode(',', $settings['standards']);
-$ignore = implode(',', $settings['ignore']);
-$hash = md5($standards.$ignore.$settings['examineDirectory'].date_timestamp_get(date_create()));
-$settings['jsonReportFile'] = 'tmp/' . $hash . '.json';
-$settings['outputFile'] = 'pub/report/' . $hash . '.html';
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        * {
+            font-size: 12px;
+        }
 
-$command = [
-    'php',
-    $settings['phpcs'],
-    "--standard={$standards}",
-    '-s',
-    "--ignore={$ignore}",
-    '--report=json',
-    "--report-file={$settings['jsonReportFile']}",
-    $settings['examineDirectory']
-];
+        table {
+            border-collapse: collapse;
+        }
 
-/*
- * TODO: Currently this process produces warning: "Misuse of shell builtins",
- * but still executes required commands
- */
-$process = new Process($command);
-$process->run();
-// TODO: Confirm json file exists
-if ($process->isTerminated()) {
-    $subCommand = [
-        'php',
-        'out.php',
-        $settings['jsonReportFile'],
-        $settings['examineDirectory'],
-        json_encode($settings)
-    ];
-    $subProcess = new Process($subCommand);
-    $subProcess->run();
-    $output = fopen($settings['outputFile'], 'w');
-    fwrite($output, $subProcess->getOutput());
-    fclose($output);
-}
+        table td {
+            border: 1px solid #f3f3f3;
+        }
+
+        .sniff-name, .sniff-count {
+            padding-top: 10px;
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<table>
+    <tr>
+        <th>Examined directory</th>
+        <td><?= $config['scanInfo']['examineDirectory'] ?></td>
+    </tr>
+    <tr>
+        <th>Standards</th>
+        <td><?= $config['scanInfo']['standards'] ?></td>
+    </tr>
+    <tr>
+        <th>Report file</th>
+        <td><?= $config['scanInfo']['jsonReportFile'] ?></td>
+    </tr>
+    <tr>
+        <th>Date</th>
+        <td><?= date('Y-d-m H:i:s', time()); ?></td>
+    </tr>
+    <?php foreach ($result as $sniff => $data): ?>
+    <tr>
+        <td class="sniff-name"><?= $sniff ?></td>
+        <td class="sniff-count">Count:<?= count($result[$sniff]) ?></td>
+    </tr>
+        <?php foreach ($data as $file): ?>
+        <tr>
+            <td class="path"><?= str_replace($config['projectBasePath'], '', $file['path']) ?></td>
+            <td class="message"><?= $file['message'] ?></td>
+        </tr>
+        <?php endforeach; ?>
+    <?php endforeach; ?>
+</table>
+</body>
+</html>
